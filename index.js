@@ -64,13 +64,6 @@ function sessionValidation(req,res,next) {
     }
 }
 
-function isAdmin(req) {
-    if (req.session.user_type == 'admin') {
-        return true;
-    }
-    return false;
-}
-
 function adminAuthorization(req, res, next) {
     if (req.session.user_type != 'admin') {
         res.status(403);
@@ -90,8 +83,8 @@ app.get('/', (req, res) => {
 
 app.get('/signup', (req, res) => {
     const errorMessage = req.session.errorMessage || null;
-    req.session.errorMessage = null; // clear after reading
-    res.render('signup');
+    req.session.errorMessage = null;
+    res.render('signup', {errorMessage: errorMessage});
 });
 
 app.post('/signingup', async (req,res) => {
@@ -109,7 +102,7 @@ app.post('/signingup', async (req,res) => {
 	if (validationResult.error != null) {
         const message = validationResult.error.details[0].message;
         req.session.errorMessage = message;
-        res.render('signup', {errorMessage: errorMessage});
+        res.redirect('/signup');
         return;
     }
 
@@ -120,10 +113,8 @@ app.post('/signingup', async (req,res) => {
 
     req.session.name = name;
     req.session.email = email;
+    req.session.authenticated = true;
 
-    loggeduser = true;
-
-    req.session.loggeduser = loggeduser;
     res.redirect('/');
 })
 
@@ -161,9 +152,6 @@ app.post('/loggingin', async (req,res) => {
         req.session.user_type = result[0].user_type;
 		req.session.cookie.maxAge = expireTime;
 
-		loggeduser = true;
-        req.session.loggeduser = loggeduser;
-
         res.redirect('/');
 		return;
 	}
@@ -197,7 +185,6 @@ app.get('/admin/demote/:email', sessionValidation, adminAuthorization, async (re
 });
 
 app.get('/logout', (req, res) => {
-    loggeduser = false;
     req.session.destroy();
     res.redirect('/');
 });
