@@ -1,0 +1,17 @@
+<%- include("./templates/header") %>
+<div class="container">
+    <% if (users.length === 0) { %>
+        <p>No users found.</p>
+    <% } else { %>
+        <ul>
+            <% users.forEach(user => { %>
+                <li>
+                    <%= user.name %> (<%= user.user_type %>)
+                    <a class="btn btn-danger mt-3"  href="/admin/promote/<%= user.email %>">Promote to Admin</a>
+                    <a class="btn btn-success mt-3"  href="/admin/demote/<%= user.email %>">Demote to User</a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</div>
+<%- include("./templates/footer") %>
