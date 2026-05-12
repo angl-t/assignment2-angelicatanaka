@@ -1,10 +1,12 @@
 <%- include("./templates/header") %>
 <div class="container mt-3 md-3">
-<div class="alert alert-danger" role="alert">
-    <%= errorMessage %>
-    <hr>
-    <a href="/signup" class="alert-link">Try again</a>
-</div>
+<% if(errorMessage != null) { %>
+    <div class="alert alert-danger" role="alert">
+        <%= errorMessage %>
+        <hr>
+        <a href="/signup" class="alert-link">Try again</a>
+    </div>
+<% } %>
 <form action='/signingup' method='post'>
     <h2>Create User</h2>
     <div class="form-floating mb-3">
